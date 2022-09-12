@@ -14,6 +14,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
 }
 
 void s21_remove_matrix(matrix_t *A) {
+    
     for (int i = 0; i < A->columns; i++) {
         free(A[i]);
     }
@@ -28,6 +29,19 @@ int s21_is_correct_to_create(int rows, int columns) {
     int err = OK;
     if (rows < 1 || columns < 1) {
         err = NCORR;
+    }
+    return err;
+}
+
+int s21_is_correct_to_remove(matrix_t *A) {
+    int err = OK;
+    if (A->rows < 1 || A->columns < 1) {
+        err = NCORR;
+    }
+    for (int i = 0; i < A->columns; i++) {
+        for (int j = 0; j < A->rows; j++) {
+            
+        }
     }
     return err;
 }
