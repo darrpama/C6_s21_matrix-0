@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct matrix_struct {
     double** matrix;
@@ -14,6 +15,12 @@ enum ERROR {
     OK,
     NCORR,
     CALCERR
+};
+
+enum RESULT {
+    CORRECT,
+    INCORRECT,
+    FAILURE
 };
 
 int s21_is_correct_to_create(int rows, int columns);
