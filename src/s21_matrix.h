@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define S21_INF 1.0 / 0.0
 #define SUCCESS 1
 #define FAILURE 0
 
@@ -32,5 +33,7 @@ void s21_print_matrix(matrix_t A);
 
 int s21_eq_matrix(matrix_t *A, matrix_t *B);
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
+int s21_mult_number(matrix_t *A, double number, matrix_t *result);
+int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
 
 #endif //  SRC_S21_MATRIX_H_

@@ -70,15 +70,15 @@ void s21_print_matrix(matrix_t A) {
 }
 
 int s21_eq_matrix(matrix_t *A, matrix_t *B) {
-    int result = SUCCESS;
+    int err = SUCCESS;
     int break_flag = 0;
     if (s21_size_eq(*A, *B) || s21_check_matrix(*A) || s21_check_matrix(*B)) {
-        result = FAILURE;
+        err = FAILURE;
     } else {
         for (int i = 0; i < A->rows; i++) {
             for (int j = 0; j < A->columns; j++) {
                 if (fabs(A->matrix[i][j] - B->matrix[i][j]) < pow(10, -7)) {
-                    result = FAILURE;
+                    err = FAILURE;
                     break_flag = 1;
                     break;
                 }
@@ -86,15 +86,15 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
             if (break_flag) break;
         }
     }
-    return result;
+    return err;
 }
 
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
-    int result = OK;
+    int err = OK;
     if (s21_check_matrix(*A) || s21_check_matrix(*B)) {
-        result = NCORR;
+        err = NCORR;
     } else if (s21_size_eq(*A, *B)) {
-        result = CALCERR;
+        err = CALCERR;
     } else {
         s21_create_matrix(A->rows, A->columns, result);
         for (int i = 0; i < A->rows; i++) {
@@ -102,7 +102,62 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
                 result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
             }
         }
-
     }
-    return result;
+    return err;
+}
+
+int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+    int err = OK;
+    if (s21_check_matrix(*A) || s21_check_matrix(*B)) {
+        err = NCORR;
+    } else if (s21_size_eq(*A, *B)) {
+        err = CALCERR;
+    } else {
+        s21_create_matrix(A->rows, A->columns, result);
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; i < A->columns; j++) {
+                result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
+            }
+        }
+    }
+    return err;
+}
+
+int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
+    int err = OK;
+    if (s21_check_matrix(*A)) {
+        err = NCORR;
+    } else if (number != number || number == S21_INF || number == -S21_INF) {
+        err = CALCERR;
+    } else {
+        s21_create_matrix(A->rows, A->columns, result);
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; i < A->columns; j++) {
+                result->matrix[i][j] = A->matrix[i][j] * number; 
+            }
+        }
+    }
+    return err;
+}
+
+int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+    int err = OK;
+    double temp = 0;
+    if (s21_check_matrix(*A) || s21_check_matrix(*B)) {
+        err = NCORR;
+    } else if (s21_mult_corr(*A, *B)) {
+        err = CALCERR;
+    } else {
+        s21_create_matrix(A->rows, B->columns, result);
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; j < B->columns; j++) {
+                for (int k = 0; k < A->columns; k++) {
+                    temp += A->matrix[i][k] * B->matrix[k][j];
+                }
+                result->matrix[i][j] = temp;
+                temp = 0;
+            }
+        }
+    }
+    return err;
 }
