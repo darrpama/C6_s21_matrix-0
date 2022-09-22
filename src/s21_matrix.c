@@ -70,13 +70,15 @@ void s21_print_matrix(matrix_t A) {
 }
 
 int s21_eq_matrix(matrix_t *A, matrix_t *B) {
-    int result = OK;
+    int result = SUCCESS;
     int break_flag = 0;
-    if (s21_size_eq(*A, *B) == OK, s21_check_matrix(*A) == OK, s21_check_matrix(*B)) {
+    if (s21_size_eq(*A, *B) || s21_check_matrix(*A) || s21_check_matrix(*B)) {
+        result = FAILURE;
+    } else {
         for (int i = 0; i < A->rows; i++) {
             for (int j = 0; j < A->columns; j++) {
                 if (fabs(A->matrix[i][j] - B->matrix[i][j]) < pow(10, -7)) {
-                    result = INCORRECT;
+                    result = FAILURE;
                     break_flag = 1;
                     break;
                 }
@@ -84,12 +86,23 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
             if (break_flag) break;
         }
     }
-    else {
-        result = FAILURE;
-    }
     return result;
 }
 
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     int result = OK;
+    if (s21_check_matrix(*A) || s21_check_matrix(*B)) {
+        result = NCORR;
+    } else if (s21_size_eq(*A, *B)) {
+        result = CALCERR;
+    } else {
+        s21_create_matrix(A->rows, A->columns, result);
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; i < A->columns; j++) {
+                result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
+            }
+        }
+
+    }
+    return result;
 }
