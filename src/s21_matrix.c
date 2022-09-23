@@ -176,6 +176,8 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
     }
 }
 
-int s21_calc_complements {
+int s21_calc_complements() {
 
 }
+
+int s21_determinant()
