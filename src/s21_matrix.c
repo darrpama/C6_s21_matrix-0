@@ -35,7 +35,8 @@ int s21_check_matrix(matrix_t A) {
     }
     return err;
 }
-
+//  0 - square
+//  1 - not square
 int s21_is_matrix_square(matrix_t A) {
     int err = OK;
     if (A.columns != A.rows) {
@@ -176,8 +177,101 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
     }
 }
 
-int s21_calc_complements() {
-
+int s21_calc_complements(matrix_t *A, matrix_t *result) {
+    int err = OK;
+    if (s21_check_matrix(*A)) {
+        err = NCORR;
+    } else if (s21_is_matrix_square(*A) || A->rows == 1) {
+        err = CALCERR;
+    } else {
+        s21_create_matrix(A->rows, A->columns, result);
+        double det_res = 0;
+        matrix_t minor = {NULL, 0, 0};
+        s21_create_matrix(A->rows - 1, A->columns - 1, &minor);
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; j < A->columns; j++) {
+                create_minor(&minor, A, i, j);
+                s21_determinant(&minor, &det_res);
+                det_res *= pow(-1, i + j);
+                result->matrix[i][j] = det_res;
+            }
+        }
+        s21_remove_matrix(&minor);
+    }
+    return err;
 }
 
-int s21_determinant()
+int s21_determinant(matrix_t *A, double *result) {
+    int err = OK;
+    if (s21_check_matrix(*A)) {
+        err = NCORR;
+    } else if (s21_is_matrix_square(*A)) {
+        err = CALCERR;
+    } else {
+        double temp = 0, res = 0;
+        if (A->rows == 1) {
+            *result = A->matrix[0][0];
+        } else if (A->rows == 2) {
+            *result = A->matrix[0][0] * A->matrix[1][1] - A->matrix[0][1] * A->matrix[1][0];
+        } else {
+            matrix_t minor = {NULL, 0, 0};
+            s21_create_matrix(A->rows - 1, A->columns - 1, &minor);
+            for (int j = 0; j < A->columns - 1; j++) {
+                create_minor(&minor, A, 0, j);
+                s21_determinant(&minor, &temp);
+                res += A->matrix[0][j] * temp * pow(-1, j);
+                *result = res;
+            }
+            s21_remove_matrix(&minor);
+        }
+    }
+    return err;
+}
+
+int create_minor(matrix_t *minor, matrix_t *A, int row, int column) {
+    int flag_str = 0, flag_cln = 0;
+    for (int k = 0; k < A->rows - 1; k++) {
+        if (k >= row) {
+            flag_str = 1;
+        } else {
+            flag_str = 0;
+        }
+        for (int h = 0; h < A->columns - 1; h++) {
+            if (h >= column) {
+                flag_cln = 1;
+            } else {
+                flag_cln = 0;
+            }
+            minor->matrix[k][h] = minor->matrix[k + flag_str][h + flag_cln];
+        }
+    }
+}
+
+s21_inverse_matrix(matrix_t *A, matrix_t *result) {
+    int err = 0;
+    double determinant = 0;
+    if (s21_check_matrix(*A)) {
+        err = NCORR;
+    } else if (s21_is_matrix_square(*A)) {
+        err = CALCERR;
+    } else {
+        s21_determinant(*A, determinant);
+        if (determinant == 0) {
+            err = CALCERR;
+        } else {
+            if (A->rows == 1) {
+                s21_create_matrix(1, 1, result);
+                result->matrix[0][0] = 1 / (A->matrix[0][0]);
+            } else {
+                matrix_t complements = {NULL, 0, 0};
+                matrix_t tr_complements = {NULL, 0, 0};
+                s21_calc_complements(A, &complements);
+                s21_transpose(&complements, &tr_complements);
+                s21_mult_number(&tr_complements, 1 / determinant, result);
+                s21_remove_matrix(&complements);
+                s21_remove_matrix(&tr_complements);
+            }
+        }
+    }
+    return err;
+}
