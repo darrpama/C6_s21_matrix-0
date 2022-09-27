@@ -30,7 +30,7 @@ int s21_is_correct_to_create(int rows, int columns) {
 
 int s21_check_matrix(matrix_t A) {
     int err = OK;
-    if (A.rows < 1 || A.columns < 1 || A.matrix == NULL) {
+    if (A.rows <= 0 || A.columns <= 0 || A.matrix == NULL) {
         err = NCORR;
     }
     return err;
@@ -78,7 +78,7 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
     } else {
         for (int i = 0; i < A->rows; i++) {
             for (int j = 0; j < A->columns; j++) {
-                if (fabs(A->matrix[i][j] - B->matrix[i][j]) < pow(10, -7)) {
+                if (fabs(A->matrix[i][j] - B->matrix[i][j]) > pow(10, -7)) {
                     err = FAILURE;
                     break_flag = 1;
                     break;
@@ -175,6 +175,7 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
             }
         }
     }
+    return err;
 }
 
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
@@ -228,7 +229,7 @@ int s21_determinant(matrix_t *A, double *result) {
     return err;
 }
 
-int create_minor(matrix_t *minor, matrix_t *A, int row, int column) {
+void create_minor(matrix_t *minor, matrix_t *A, int row, int column) {
     int flag_str = 0, flag_cln = 0;
     for (int k = 0; k < A->rows - 1; k++) {
         if (k >= row) {
@@ -247,15 +248,13 @@ int create_minor(matrix_t *minor, matrix_t *A, int row, int column) {
     }
 }
 
-s21_inverse_matrix(matrix_t *A, matrix_t *result) {
+int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     int err = 0;
     double determinant = 0;
-    if (s21_check_matrix(*A)) {
+    if (s21_check_matrix(*A) || s21_is_matrix_square(*A)) {
         err = NCORR;
-    } else if (s21_is_matrix_square(*A)) {
-        err = CALCERR;
     } else {
-        s21_determinant(*A, determinant);
+        s21_determinant(A, &determinant);
         if (determinant == 0) {
             err = CALCERR;
         } else {
