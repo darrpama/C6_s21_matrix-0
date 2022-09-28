@@ -3,12 +3,12 @@
 int s21_create_matrix(int rows, int columns, matrix_t *result) {
     int err = s21_is_correct_to_create(rows, columns);
     if (err == OK) {
+        result->columns = columns;
+        result->rows = rows;
         result->matrix = (double **)calloc(rows, sizeof(double*));
         for (int i = 0; i < rows; i++) {
             result->matrix[i] = (double *)calloc(columns, sizeof(double));
         }
-        result->columns = columns;
-        result->rows = rows;
     }
     return err;
 }
@@ -22,7 +22,7 @@ void s21_remove_matrix(matrix_t *A) {
 
 int s21_is_correct_to_create(int rows, int columns) {
     int err = OK;
-    if (rows < 1 || columns < 1) {
+    if (rows <= 0 || columns <= 0) {
         err = NCORR;
     }
     return err;
@@ -91,15 +91,15 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
 }
 
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
-    int err = OK;
+    int err = 0;
     if (s21_check_matrix(*A) || s21_check_matrix(*B)) {
-        err = NCORR;
+        err = 1;
     } else if (s21_size_eq(*A, *B)) {
-        err = CALCERR;
+        err = 2;
     } else {
         s21_create_matrix(A->rows, A->columns, result);
         for (int i = 0; i < A->rows; i++) {
-            for (int j = 0; i < A->columns; j++) {
+            for (int j = 0; j < A->columns; j++) {
                 result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
             }
         }
@@ -116,7 +116,7 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     } else {
         s21_create_matrix(A->rows, A->columns, result);
         for (int i = 0; i < A->rows; i++) {
-            for (int j = 0; i < A->columns; j++) {
+            for (int j = 0; j < A->columns; j++) {
                 result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
             }
         }
@@ -133,7 +133,7 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
     } else {
         s21_create_matrix(A->rows, A->columns, result);
         for (int i = 0; i < A->rows; i++) {
-            for (int j = 0; i < A->columns; j++) {
+            for (int j = 0; j < A->columns; j++) {
                 result->matrix[i][j] = A->matrix[i][j] * number; 
             }
         }
