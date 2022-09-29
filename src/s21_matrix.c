@@ -217,7 +217,7 @@ int s21_determinant(matrix_t *A, double *result) {
         } else {
             matrix_t minor = {NULL, 0, 0};
             s21_create_matrix(A->rows - 1, A->columns - 1, &minor);
-            for (int j = 0; j < A->columns - 1; j++) {
+            for (int j = 0; j < A->columns; j++) {
                 create_minor(&minor, A, 0, j);
                 s21_determinant(&minor, &temp);
                 res += A->matrix[0][j] * temp * pow(-1, j);
@@ -243,7 +243,7 @@ void create_minor(matrix_t *minor, matrix_t *A, int row, int column) {
             } else {
                 flag_cln = 0;
             }
-            minor->matrix[k][h] = minor->matrix[k + flag_str][h + flag_cln];
+            minor->matrix[k][h] = A->matrix[k + flag_str][h + flag_cln];
         }
     }
 }
