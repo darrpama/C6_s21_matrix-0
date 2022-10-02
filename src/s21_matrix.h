@@ -1,9 +1,9 @@
 #ifndef SRC_S21_MATRIX_H_
 #define SRC_S21_MATRIX_H_
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #define S21_INF 1.0 / 0.0
 #define S21_NAN 0.0 / 0.0
@@ -11,16 +11,12 @@
 #define FAILURE 0
 
 typedef struct matrix_struct {
-    double** matrix;
-    int rows;
-    int columns;
+  double **matrix;
+  int rows;
+  int columns;
 } matrix_t;
 
-enum ERROR {
-    OK,
-    NCORR,
-    CALCERR
-};
+enum ERROR { OK, NCORR, CALCERR };
 
 int s21_create_matrix(int rows, int columns, matrix_t *result);
 void s21_remove_matrix(matrix_t *A);
@@ -43,5 +39,4 @@ int s21_determinant(matrix_t *A, double *result);
 void create_minor(matrix_t *minor, matrix_t *A, int row, int column);
 int s21_inverse_matrix(matrix_t *A, matrix_t *result);
 
-
-#endif //  SRC_S21_MATRIX_H_
+#endif  //  SRC_S21_MATRIX_H_

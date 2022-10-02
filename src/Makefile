@@ -19,6 +19,10 @@ test: test.o s21_matrix.o
 	$(CC) $(CFLAGS) s21_matrix.o test.o -o test.out $(CHKFLAGS)
 	./test.out
 
+check:
+	cp ../materials/linters/.clang-format .
+	clang-format -n *.c
+
 clean:
 	rm -rf *.o
 	rm -rf *.out
