@@ -31,7 +31,7 @@ test: test.o s21_matrix.o
 check:
 	cp ../materials/linters/.clang-format .
 	cppcheck *.c *.h
-	clang-format -n *.c
+	clang-format -n *.c *.h
 
 gcov_report: matrix_test.o s21_matrix.o
 	chmod 777 tests.check
